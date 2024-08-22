@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("tags")
+@RequestMapping("/tags")
 public class TagController {
 
     @Autowired

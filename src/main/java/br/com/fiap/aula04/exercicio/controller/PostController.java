@@ -12,6 +12,7 @@ import br.com.fiap.aula04.exercicio.repository.PostRepository;
 import br.com.fiap.aula04.exercicio.repository.TagRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 
 @RestController
-@RequestMapping("posts")
+@RequestMapping("/posts")
 public class PostController {
 
     @Autowired
@@ -32,6 +33,7 @@ public class PostController {
 
     @Autowired
     private TagRepository tagRepository;
+
 
     @GetMapping
     public ResponseEntity<List<DetalhesPostDto>> get(Pageable pageable){

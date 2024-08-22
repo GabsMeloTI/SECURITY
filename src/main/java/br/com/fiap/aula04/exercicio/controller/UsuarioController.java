@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("login")
+@RequestMapping("/login")
 public class UsuarioController {
 
     @Autowired
@@ -31,7 +31,7 @@ public class UsuarioController {
     public ResponseEntity<DetalhesUsuarioDto> post(@RequestBody @Valid CadastroUsuarioDto dto, UriComponentsBuilder uriBuilder){
         var usuario = new Usuario(dto.login(), passwordEncoder.encode(dto.senha()));
         usuarioRepository.save(usuario);
-        var url = uriBuilder.path("/usuario/{id}").buildAndExpand(usuario.getId()).toUri();
+        var url = uriBuilder.path("/register/{id}").buildAndExpand(usuario.getId()).toUri();
         return ResponseEntity.created(url).body(new DetalhesUsuarioDto(usuario));
     }
 
