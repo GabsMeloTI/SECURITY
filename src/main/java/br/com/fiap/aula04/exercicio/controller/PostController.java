@@ -33,31 +33,15 @@ public class PostController {
     @Autowired
     private TagRepository tagRepository;
 
-    @DeleteMapping("{idPost}/tags")
-    @Transactional
-    public ResponseEntity<Void> deleteTags(@PathVariable("idPost") Long idPost){
-        var post = postRepository.getReferenceById(idPost);
-        post.getTags().clear();
-        return ResponseEntity.noContent().build();
+    @GetMapping
+    public ResponseEntity<List<DetalhesPostDto>> get(Pageable pageable){
+        var lista = postRepository.findAll(pageable).stream().map(DetalhesPostDto::new).toList();
+        return ResponseEntity.ok(lista);
     }
 
-    @DeleteMapping("{idPost}/tags/{idTag}")
-    @Transactional
-    public ResponseEntity<Void> delete(@PathVariable("idPost") Long idPost,
-                                       @PathVariable("idTag") Long idTag) {
-        var post = postRepository.getReferenceById(idPost);
-        var tag = tagRepository.getReferenceById(idTag);
-        post.getTags().remove(tag);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("{idPost}/tags/{idTag}")
-    @Transactional
-    public ResponseEntity<DetalhesPostDto> put(@PathVariable("idPost") Long idPost,
-                                               @PathVariable("idTag") Long idTag) {
-        var post = postRepository.getReferenceById(idPost);
-        var tag = tagRepository.getReferenceById(idTag);
-        post.getTags().add(tag); //Acessa a lista de tags do post e adiciona a nova tag
+    @GetMapping("{id}")
+    public ResponseEntity<DetalhesPostDto> get(@PathVariable("id") Long id){
+        var post = postRepository.getReferenceById(id);
         return ResponseEntity.ok(new DetalhesPostDto(post));
     }
 
@@ -66,9 +50,7 @@ public class PostController {
     public ResponseEntity<DetalhesComentarioDto> post(@PathVariable("id") Long id,
                                                       @RequestBody @Valid CadastroComentarioDto dto,
                                                       UriComponentsBuilder uriBuilder){
-        //chamar o repository post para pesquisar o post pelo codigo
         var post = postRepository.getReferenceById(id);
-        //instanciar o comentário com o dto
         var comentario = new Comentario(dto, post);
         comentarioRepository.save(comentario);
         var uri = uriBuilder.path("comentarios/{id}").buildAndExpand(comentario.getId()).toUri();
@@ -85,15 +67,14 @@ public class PostController {
         return ResponseEntity.created(url).body(new DetalhesPostDto(post));
     }
 
-    @GetMapping
-    public ResponseEntity<List<DetalhesPostDto>> get(Pageable pageable){
-        var lista = postRepository.findAll(pageable).stream().map(DetalhesPostDto::new).toList();
-        return ResponseEntity.ok(lista);
-    }
 
-    @GetMapping("{id}")
-    public ResponseEntity<DetalhesPostDto> get(@PathVariable("id") Long id){
-        var post = postRepository.getReferenceById(id);
+    @PutMapping("{idPost}/tags/{idTag}")
+    @Transactional
+    public ResponseEntity<DetalhesPostDto> put(@PathVariable("idPost") Long idPost,
+                                               @PathVariable("idTag") Long idTag) {
+        var post = postRepository.getReferenceById(idPost);
+        var tag = tagRepository.getReferenceById(idTag);
+        post.getTags().add(tag); //Acessa a lista de tags do post e adiciona a nova tag
         return ResponseEntity.ok(new DetalhesPostDto(post));
     }
 
@@ -109,6 +90,24 @@ public class PostController {
     @Transactional
     public ResponseEntity<Void> delete(@PathVariable("id") Long id){
         postRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("{idPost}/tags")
+    @Transactional
+    public ResponseEntity<Void> deleteTags(@PathVariable("idPost") Long idPost){
+        var post = postRepository.getReferenceById(idPost);
+        post.getTags().clear();
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("{idPost}/tags/{idTag}")
+    @Transactional
+    public ResponseEntity<Void> delete(@PathVariable("idPost") Long idPost,
+                                       @PathVariable("idTag") Long idTag) {
+        var post = postRepository.getReferenceById(idPost);
+        var tag = tagRepository.getReferenceById(idTag);
+        post.getTags().remove(tag);
         return ResponseEntity.noContent().build();
     }
 

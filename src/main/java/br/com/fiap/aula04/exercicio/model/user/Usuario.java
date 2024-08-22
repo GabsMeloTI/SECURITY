@@ -29,10 +29,6 @@ public class Usuario implements UserDetails {
     @Column(name="ds_senha", nullable = false)
     private String senha;
 
-    public Usuario(CadastroUsuarioDto dto) {
-        this.login = dto.login();
-        this.senha = dto.senha();
-    }
 
     public Usuario(String login, String senha) {
         this.login = login;

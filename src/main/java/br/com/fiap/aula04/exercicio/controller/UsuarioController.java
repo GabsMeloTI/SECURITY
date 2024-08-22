@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("usuario")
+@RequestMapping("login")
 public class UsuarioController {
 
     @Autowired
@@ -26,7 +26,7 @@ public class UsuarioController {
     private PasswordEncoder passwordEncoder;
 
 
-    @PostMapping("login")
+    @PostMapping("/register")
     @Transactional
     public ResponseEntity<DetalhesUsuarioDto> post(@RequestBody @Valid CadastroUsuarioDto dto, UriComponentsBuilder uriBuilder){
         var usuario = new Usuario(dto.login(), passwordEncoder.encode(dto.senha()));
