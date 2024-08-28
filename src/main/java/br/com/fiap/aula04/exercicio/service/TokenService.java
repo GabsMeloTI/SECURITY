@@ -26,4 +26,17 @@ public class TokenService {
             throw new RuntimeException("Erro ao gerar o token JWT");
         }
     }
+
+    public String getSubject(String token) {
+        try {
+            Algorithm algoritimo = Algorithm.HMAC256(senhaToken);
+            return JWT.require(algoritimo)
+                    .withIssuer("API FIAP")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        } catch (JWTCreationException e) {
+            throw new RuntimeException("Não foi possível validar o tokenJWT");
+        }
+    }
 }

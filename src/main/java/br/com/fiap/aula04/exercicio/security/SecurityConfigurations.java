@@ -1,5 +1,6 @@
 package br.com.fiap.aula04.exercicio.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurations {
+
+    @Autowired
+    private SecurityFilter securityFilter;
+
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -27,10 +32,18 @@ public class SecurityConfigurations {
         return configuration.getAuthenticationManager();
     }
 
+    private static final String[] SWAGGER_WHITELIS = { "/swagger-ui/**", "/v3/api-docs/**"};
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(req -> {
+                    req.requestMatchers(HttpMethod.POST, "/login").permitAll();
+                    req.requestMatchers(HttpMethod.POST, "/login/register").permitAll();
+                    req.requestMatchers(SWAGGER_WHITELIS).permitAll();
+                    req.anyRequest().authenticated(); })
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }
